@@ -3,7 +3,7 @@ import 'package:app/models/animal.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'https://localhost:3333/api/animais';
+  static const String baseUrl = 'http://localhost:3333/api';
   final http.Client client;
 
   ApiService({http.Client? client}) : client = client ?? http.Client();
