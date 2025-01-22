@@ -8,8 +8,43 @@ class ApiService {
 
   ApiService({http.Client? client}) : client = client ?? http.Client();
 
-  Future<List<Animal>> buscarAnimais() async {
-    final response = await client.get(Uri.parse(baseUrl));
+  Future<void> registrarUsuario(String nome, String email, String senha) async {
+    final response = await client.post(
+      Uri.parse('$baseUrl/registrar'),
+      body: jsonEncode({
+        'nome': nome,
+        'email': email,
+        'senha': senha,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Erro ao registrar usuário');
+    }
+  }
+
+  Future<String> login(String email, String senha) async {
+    final response = await client.post(
+      Uri.parse('$baseUrl/login'),
+      body: jsonEncode({
+        'email': email,
+        'senha': senha,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      return json['token'];
+    } else {
+      throw Exception('Falha ao fazer login');
+    }
+  }
+
+  Future<List<Animal>> buscarAnimais(String token) async {
+    final response = await client.get(
+      Uri.parse('$baseUrl/animais'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);

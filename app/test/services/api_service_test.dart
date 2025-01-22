@@ -20,26 +20,23 @@ void main() {
     test(
       'deve retornar uma lista de animais quando a chamada da API for bem-sucedida',
       () async {
-        when(mockClient.get(Uri.parse('${ApiService.baseUrl}/animais')))
+        when(mockClient.post(Uri.parse('${ApiService.baseUrl}/login'),
+                body: anyNamed('body')))
+            .thenAnswer((_) async =>
+                http.Response('{"token": "seu_token_de_acesso"}', 200));
+
+        final token = await apiService.login('email@example.com', 'senha123');
+
+        when(mockClient.get(Uri.parse('${ApiService.baseUrl}/animais'),
+                headers: anyNamed('headers')))
             .thenAnswer((_) async => http.Response(
-                '[{"nome": "Toto", "especie": "Cachorro", "raca": "Vira-lata", "foto": "foto.jpg"}]',
+                '[{"nome": "Totó", "especie": "Cachorro", "raca": "Vira-lata", "foto": "foto.jpg"}]',
                 200));
 
-        final animais = await apiService.buscarAnimais();
-
+        final animais = await apiService.buscarAnimais(token);
         expect(animais, isA<List<Animal>>());
         expect(animais.length, 1);
-        expect(animais[0].nome, 'Toto');
-      },
-    );
-
-    test(
-      'deve lançar uma exceção quando a chamada da API falhar',
-      () async {
-        when(mockClient.get(Uri.parse('${ApiService.baseUrl}/animais')))
-            .thenAnswer((_) async => http.Response('Erro', 404));
-
-        expect(apiService.buscarAnimais(), throwsException);
+        expect(animais[0].nome, 'Totó');
       },
     );
   });

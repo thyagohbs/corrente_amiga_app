@@ -18,8 +18,13 @@ void main() {
 
   group('buscarAnimais', () {
     test('deve carregar os animais e notificar os listeners', () async {
+      when(mockApiService.login('email@example.com', 'senha123'))
+          .thenAnswer((_) async => 'seu_token_de_acesso');
+
+      final token = await mockApiService.login('email@example.com', 'senha123');
+
       // Mockar a resposta da API
-      when(mockApiService.buscarAnimais()).thenAnswer((_) async => [
+      when(mockApiService.buscarAnimais(token)).thenAnswer((_) async => [
             Animal(
                 nome: 'Totó',
                 especie: 'Cachorro',
@@ -34,12 +39,18 @@ void main() {
       expect(viewModel.carregando, false);
       expect(viewModel.animais.length, 1);
       expect(viewModel.animais[0].nome, 'Totó');
-      verify(mockApiService.buscarAnimais()).called(1);
+      verify(mockApiService.buscarAnimais(token)).called(1);
     });
 
     test('deve lidar com erros e notificar os listeners', () async {
+      when(mockApiService.login('email@example.com', 'senha123'))
+          .thenAnswer((_) async => 'seu_token_de_acesso');
+
+      final token = await mockApiService.login('email@example.com', 'senha123');
+
       // Mockar a resposta da API com um erro ANTES de chamar a função
-      when(mockApiService.buscarAnimais()).thenThrow(Exception('Erro na API'));
+      when(mockApiService.buscarAnimais(token))
+          .thenThrow(Exception('Erro na API'));
 
       // Chamar a função que estamos testando
       await viewModel.buscarAnimais();
@@ -47,6 +58,7 @@ void main() {
       // Verificar se o estado do viewModel foi atualizado corretamente
       expect(viewModel.carregando, false);
       expect(viewModel.erro, isNotNull);
+      verify(mockApiService.buscarAnimais(token)).called(1);
     });
   });
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/animal.dart';
 import '../services/api_service.dart';
 
@@ -22,7 +23,14 @@ class ListaAnimaisViewModel with ChangeNotifier {
     notifyListeners();
 
     try {
-      _animais = await apiService.buscarAnimais();
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      if (token != null) {
+        _animais = await apiService.buscarAnimais(token);
+      } else {
+        _erro = 'Usuário não autenticado!';
+      }
     } catch (e) {
       _erro = 'Erro ao buscar animais: $e';
     } finally {

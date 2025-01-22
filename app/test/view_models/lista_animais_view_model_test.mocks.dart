@@ -5,10 +5,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:app/models/animal.dart' as _i5;
+import 'package:app/models/animal.dart' as _i6;
 import 'package:app/services/api_service.dart' as _i3;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -46,10 +47,36 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           as _i2.Client);
 
   @override
-  _i4.Future<List<_i5.Animal>> buscarAnimais() =>
+  _i4.Future<void> registrarUsuario(
+    String? nome,
+    String? email,
+    String? senha,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#buscarAnimais, []),
-            returnValue: _i4.Future<List<_i5.Animal>>.value(<_i5.Animal>[]),
+            Invocation.method(#registrarUsuario, [nome, email, senha]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
           )
-          as _i4.Future<List<_i5.Animal>>);
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<String> login(String? email, String? senha) =>
+      (super.noSuchMethod(
+            Invocation.method(#login, [email, senha]),
+            returnValue: _i4.Future<String>.value(
+              _i5.dummyValue<String>(
+                this,
+                Invocation.method(#login, [email, senha]),
+              ),
+            ),
+          )
+          as _i4.Future<String>);
+
+  @override
+  _i4.Future<List<_i6.Animal>> buscarAnimais(String? token) =>
+      (super.noSuchMethod(
+            Invocation.method(#buscarAnimais, [token]),
+            returnValue: _i4.Future<List<_i6.Animal>>.value(<_i6.Animal>[]),
+          )
+          as _i4.Future<List<_i6.Animal>>);
 }
