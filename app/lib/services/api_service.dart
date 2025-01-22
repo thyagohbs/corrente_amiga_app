@@ -32,7 +32,7 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
       final Map<String, dynamic> json = jsonDecode(response.body);
       return json['token'];
     } else {

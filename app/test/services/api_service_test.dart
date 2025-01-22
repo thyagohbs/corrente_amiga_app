@@ -22,21 +22,22 @@ void main() {
       () async {
         when(mockClient.post(Uri.parse('${ApiService.baseUrl}/login'),
                 body: anyNamed('body')))
-            .thenAnswer((_) async =>
-                http.Response('{"token": "seu_token_de_acesso"}', 200));
+            .thenAnswer((_) async => http.Response(
+                '{"token": "oat_Mw.ZC0waHlIYnF6WUlUYWI0bElfeEcwMndWbnI3cnpjZXlpcEk0RHpfMzk4MjY2NjEwOQ"}',
+                200));
 
-        final token = await apiService.login('email@example.com', 'senha123');
+        final token = await apiService.login('teste@teste.com', '123456');
 
         when(mockClient.get(Uri.parse('${ApiService.baseUrl}/animais'),
                 headers: anyNamed('headers')))
             .thenAnswer((_) async => http.Response(
-                '[{"nome": "Totó", "especie": "Cachorro", "raca": "Vira-lata", "foto": "foto.jpg"}]',
+                '[{"nome": "Ralfi", "especie": "Cachorro", "raca": "Labrador", "foto": "foto.jpg"}]',
                 200));
 
         final animais = await apiService.buscarAnimais(token);
         expect(animais, isA<List<Animal>>());
         expect(animais.length, 1);
-        expect(animais[0].nome, 'Totó');
+        expect(animais[0].nome, 'Ralfi');
       },
     );
   });
