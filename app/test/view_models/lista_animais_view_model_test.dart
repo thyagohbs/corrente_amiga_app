@@ -4,6 +4,7 @@ import 'package:app/view_models/lista_animais_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'lista_animais_view_model_test.mocks.dart';
 
 @GenerateMocks([ApiService])
@@ -23,6 +24,9 @@ void main() {
               'oat_Mw.ZC0waHlIYnF6WUlUYWI0bElfeEcwMndWbnI3cnpjZXlpcEk0RHpfMzk4MjY2NjEwOQ');
 
       final token = await mockApiService.login('teste@teste.com', '123456');
+
+      // Mockar SharedPreferences para retornar o token
+      SharedPreferences.setMockInitialValues({'token': token});
 
       // Mockar a resposta da API
       when(mockApiService.buscarAnimais(token)).thenAnswer((_) async => [
