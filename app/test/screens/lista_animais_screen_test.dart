@@ -1,50 +1,75 @@
 import 'package:app/models/animal.dart';
-import 'package:app/services/api_service.dart';
+import 'package:app/screens/lista_animais_screen.dart';
+import 'package:app/view_models/lista_animais_view_model.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import 'lista_animais_screen_test.mocks.dart';
 
-@GenerateMocks([http.Client])
+@GenerateMocks([ListaAnimaisViewModel])
 void main() {
-  late ApiService apiService;
-  late MockClient mockClient;
+  late MockListaAnimaisViewModel mockViewModel;
 
   setUp(() {
-    mockClient = MockClient();
-    apiService = ApiService(client: mockClient);
+    mockViewModel = MockListaAnimaisViewModel();
   });
 
-  group('buscarAnimais', () {
-    test(
-      'deve retornar uma lista de animais quando a chamada da API for bem-sucedida',
-      () async {
-        // Mockar a resposta da API para o login
-        when(mockClient.post(Uri.parse('${ApiService.baseUrl}/login'),
-                body: anyNamed('body')))
-            .thenAnswer((_) async => http.Response(
-                '{"token": "oat_Mw.ZC0waHlIYnF6WUlUYWI0bElfeEcwMndWbnI3cnpjZXlpcEk0RHpfMzk4MjY2NjEwOQ"}',
-                200));
+  testWidgets('deve exibir CircularProgressIndicator enquanto carrega',
+      (WidgetTester tester) async {
+    when(mockViewModel.carregando).thenReturn(true);
 
-        // Fazer o login para obter o token
-        final token = await apiService.login('teste@teste.com', '123456');
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ListaAnimaisViewModel>(
+        create: (context) => mockViewModel,
+        child: const MaterialApp(
+          home: ListaAnimaisScreen(),
+        ),
+      ),
+    );
 
-        // Mockar a resposta da API para buscar animais
-        when(mockClient.get(Uri.parse('${ApiService.baseUrl}/animais'),
-                headers: anyNamed('headers')))
-            .thenAnswer((_) async => http.Response(
-                '[{"nome": "Ralfi", "especie": "Cachorro", "raca": "Labrador", "foto": "foto.jpg"}]',
-                200));
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
 
-        // Chamar buscarAnimais com o token
-        final animais = await apiService.buscarAnimais(token);
+  testWidgets('deve exibir mensagem quando não houver animais',
+      (WidgetTester tester) async {
+    when(mockViewModel.carregando).thenReturn(false);
+    when(mockViewModel.erro).thenReturn(null);
+    when(mockViewModel.animais).thenReturn([]);
 
-        expect(animais, isA<List<Animal>>());
-        expect(animais.length, 1);
-        expect(animais[0].nome, 'Ralfi');
-      },
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ListaAnimaisViewModel>(
+        create: (context) => mockViewModel,
+        child: const MaterialApp(
+          home: ListaAnimaisScreen(),
+        ),
+      ),
+    );
+
+    expect(find.text('Nenhum animal encontrado.'), findsOneWidget);
+  });
+
+  testWidgets('deve exibir a lista de animais quando houver animais',
+      (WidgetTester tester) async {
+    when(mockViewModel.carregando).thenReturn(false);
+    when(mockViewModel.erro).thenReturn(null);
+    when(mockViewModel.animais).thenReturn([
+      Animal(
+          nome: 'Ralfi',
+          especie: 'Cachorro',
+          raca: 'Vira-lata',
+          foto: 'foto.png')
+    ]);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ListaAnimaisViewModel>(
+        create: (context) => mockViewModel,
+        child: const MaterialApp(
+          home: ListaAnimaisScreen(),
+        ),
+      ),
     );
   });
 }

@@ -19,9 +19,8 @@ void main() {
 
   group('buscarAnimais', () {
     test('deve carregar os animais e notificar os listeners', () async {
-      when(mockApiService.login('teste@teste.com', '123456')).thenAnswer(
-          (_) async =>
-              'oat_Mw.ZC0waHlIYnF6WUlUYWI0bElfeEcwMndWbnI3cnpjZXlpcEk0RHpfMzk4MjY2NjEwOQ');
+      when(mockApiService.login('teste@teste.com', '123456'))
+          .thenAnswer((_) async => '');
 
       final token = await mockApiService.login('teste@teste.com', '123456');
 
@@ -34,7 +33,7 @@ void main() {
                 nome: 'Ralfi',
                 especie: 'Cachorro',
                 raca: 'Labrador',
-                foto: 'foto.jpg'),
+                foto: 'https://i.ibb.co/xY07zW7/dog.png'),
           ]);
 
       // Chamar a função que estamos testando

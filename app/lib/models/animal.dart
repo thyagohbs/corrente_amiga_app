@@ -6,7 +6,7 @@ class Animal {
   final String? sexo;
   final int? idade;
   final String? descricao;
-  final String? foto;
+  final String foto;
 
   Animal({
     required this.nome,
@@ -16,7 +16,7 @@ class Animal {
     this.sexo,
     this.idade,
     this.descricao,
-    this.foto,
+    required this.foto,
   });
 
   factory Animal.fromJson(Map<String, dynamic> json) {

@@ -31,7 +31,7 @@ void main() {
         when(mockClient.get(Uri.parse('${ApiService.baseUrl}/animais'),
                 headers: anyNamed('headers')))
             .thenAnswer((_) async => http.Response(
-                '[{"nome": "Ralfi", "especie": "Cachorro", "raca": "Labrador", "foto": "foto.jpg"}]',
+                '[{"nome": "Ralfi", "especie": "Cachorro", "raca": "Labrador", "foto": "https://i.ibb.co/xY07zW7/dog.png"}]',
                 200));
 
         final animais = await apiService.buscarAnimais(token);
