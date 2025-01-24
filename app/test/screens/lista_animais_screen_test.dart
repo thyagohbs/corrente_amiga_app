@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:provider/provider.dart';
 
 import 'lista_animais_screen_test.mocks.dart';
+import 'mock_image_provider_test.dart';
 
 @GenerateMocks([ListaAnimaisViewModel])
 void main() {
@@ -21,12 +21,11 @@ void main() {
       (WidgetTester tester) async {
     when(mockViewModel.carregando).thenReturn(true);
 
+    final mockImageProvider = MockImageProvider();
+
     await tester.pumpWidget(
-      ChangeNotifierProvider<ListaAnimaisViewModel>(
-        create: (context) => mockViewModel,
-        child: const MaterialApp(
-          home: ListaAnimaisScreen(),
-        ),
+      MaterialApp(
+        home: ListaAnimaisScreen(imageProvider: mockImageProvider),
       ),
     );
 
@@ -39,12 +38,11 @@ void main() {
     when(mockViewModel.erro).thenReturn(null);
     when(mockViewModel.animais).thenReturn([]);
 
+    final mockImageProvider = MockImageProvider();
+
     await tester.pumpWidget(
-      ChangeNotifierProvider<ListaAnimaisViewModel>(
-        create: (context) => mockViewModel,
-        child: const MaterialApp(
-          home: ListaAnimaisScreen(),
-        ),
+      MaterialApp(
+        home: ListaAnimaisScreen(imageProvider: mockImageProvider),
       ),
     );
 
@@ -53,6 +51,8 @@ void main() {
 
   testWidgets('deve exibir a lista de animais quando houver animais',
       (WidgetTester tester) async {
+    final mockImageProvider = MockImageProvider();
+
     when(mockViewModel.carregando).thenReturn(false);
     when(mockViewModel.erro).thenReturn(null);
     when(mockViewModel.animais).thenReturn([
@@ -64,11 +64,8 @@ void main() {
     ]);
 
     await tester.pumpWidget(
-      ChangeNotifierProvider<ListaAnimaisViewModel>(
-        create: (context) => mockViewModel,
-        child: const MaterialApp(
-          home: ListaAnimaisScreen(),
-        ),
+      MaterialApp(
+        home: ListaAnimaisScreen(imageProvider: mockImageProvider),
       ),
     );
   });

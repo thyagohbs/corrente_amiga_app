@@ -4,7 +4,9 @@ import '../view_models/lista_animais_view_model.dart';
 import '../components/animal_card.dart';
 
 class ListaAnimaisScreen extends StatefulWidget {
-  const ListaAnimaisScreen({Key? key}) : super(key: key);
+  final ImageProvider imageProvider;
+
+  const ListaAnimaisScreen({super.key, required this.imageProvider});
 
   @override
   State<ListaAnimaisScreen> createState() => _ListaAnimaisScreenState();
@@ -15,10 +17,11 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    /* WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ListaAnimaisViewModel>(context, listen: false)
           .buscarAnimais();
     });
+    */
   }
 
   @override
@@ -29,6 +32,8 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
       ),
       body: Consumer<ListaAnimaisViewModel>(
         builder: (context, viewModel, child) {
+          viewModel.buscarAnimais();
+
           if (viewModel.carregando) {
             return const Center(child: CircularProgressIndicator());
           } else if (viewModel.carregando) {
