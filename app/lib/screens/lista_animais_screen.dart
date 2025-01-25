@@ -1,3 +1,4 @@
+import 'package:app/screens/detalhes_animal_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/lista_animais_view_model.dart';
@@ -45,8 +46,20 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
               itemCount: viewModel.animais.length,
               itemBuilder: (context, index) {
                 final animal = viewModel.animais[index];
-                return AnimalCard(
-                    animal: animal, imageProvider: widget.imageProvider);
+
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DetalhesAnimalScreen(animal: animal),
+                      ),
+                    );
+                  },
+                  child: AnimalCard(
+                      animal: animal, imageProvider: widget.imageProvider),
+                );
               },
             );
           }
