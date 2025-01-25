@@ -45,7 +45,8 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
               itemCount: viewModel.animais.length,
               itemBuilder: (context, index) {
                 final animal = viewModel.animais[index];
-                return AnimalCard(animal: animal);
+                return AnimalCard(
+                    animal: animal, imageProvider: widget.imageProvider);
               },
             );
           }

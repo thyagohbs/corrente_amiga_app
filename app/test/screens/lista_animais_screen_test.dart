@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 
 import 'lista_animais_screen_test.mocks.dart';
 import 'mock_image_provider_test.dart';
@@ -24,8 +25,11 @@ void main() {
     final mockImageProvider = MockImageProvider();
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: ListaAnimaisScreen(imageProvider: mockImageProvider),
+      ChangeNotifierProvider<ListaAnimaisViewModel>(
+        create: (_) => mockViewModel,
+        child: MaterialApp(
+          home: ListaAnimaisScreen(imageProvider: mockImageProvider),
+        ),
       ),
     );
 
@@ -41,8 +45,11 @@ void main() {
     final mockImageProvider = MockImageProvider();
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: ListaAnimaisScreen(imageProvider: mockImageProvider),
+      ChangeNotifierProvider<ListaAnimaisViewModel>(
+        create: (_) => mockViewModel,
+        child: MaterialApp(
+          home: ListaAnimaisScreen(imageProvider: mockImageProvider),
+        ),
       ),
     );
 
@@ -64,8 +71,11 @@ void main() {
     ]);
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: ListaAnimaisScreen(imageProvider: mockImageProvider),
+      ChangeNotifierProvider<ListaAnimaisViewModel>(
+        create: (_) => mockViewModel,
+        child: MaterialApp(
+          home: ListaAnimaisScreen(imageProvider: mockImageProvider),
+        ),
       ),
     );
   });
