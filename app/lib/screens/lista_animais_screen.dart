@@ -17,12 +17,6 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
   @override
   void initState() {
     super.initState();
-
-    /* WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ListaAnimaisViewModel>(context, listen: false)
-          .buscarAnimais();
-    });
-    */
   }
 
   @override
