@@ -20,31 +20,78 @@ void main() {
   group('buscarAnimais', () {
     test('deve carregar os animais e notificar os listeners', () async {
       when(mockApiService.login('teste@teste.com', '123456'))
-          .thenAnswer((_) async => '');
-
-      final token = await mockApiService.login('teste@teste.com', '123456');
+          .thenAnswer((_) async => 'fake_token');
 
       // Mockar SharedPreferences para retornar o token
-      SharedPreferences.setMockInitialValues({'token': token});
+      SharedPreferences.setMockInitialValues({'token': 'fake_token'});
 
       // Mockar a resposta da API
-      when(mockApiService.buscarAnimais(token)).thenAnswer((_) async => [
+      when(mockApiService.buscarAnimais('fake_token')).thenAnswer((_) async => [
             Animal(
-                nome: 'Ralfi',
-                especie: 'Cachorro',
-                raca: 'Labrador',
-                foto: 'https://i.ibb.co/xY07zW7/dog.png'),
+              nome: 'Ralfi',
+              especie: 'Cachorro',
+              raca: 'Labrador',
+              foto: 'https://i.ibb.co/xY07zW7/dog.png',
+              localizacao: '',
+            ),
           ]);
 
       // Chamar a função que estamos testando
-      await viewModel
-          .buscarAnimais(); // Chamada movida para antes das asserções
+      await viewModel.buscarAnimais();
 
       // Verificar se o estado do viewModel foi atualizado corretamente
       expect(viewModel.carregando, false);
       expect(viewModel.animais.length, 1);
       expect(viewModel.animais[0].nome, 'Ralfi');
-      verify(mockApiService.buscarAnimais(token)).called(1);
+      verify(mockApiService.buscarAnimais('fake_token')).called(1);
+    });
+
+    test('deve definir erro quando a API falhar', () async {
+      when(mockApiService.buscarAnimais(any))
+          .thenThrow(Exception('Erro na API'));
+
+      await viewModel.buscarAnimais();
+
+      expect(viewModel.erro, 'Erro ao buscar animais: Exception: Erro na API');
+      expect(viewModel.carregando, false);
+    });
+
+    test('deve definir erro quando o token for nulo', () async {
+      SharedPreferences.setMockInitialValues({}); // Token nulo
+
+      await viewModel.buscarAnimais();
+
+      expect(viewModel.erro, 'Usuário não autenticado!');
+      expect(viewModel.carregando, false);
+    });
+
+    test('deve notificar os listeners ao carregar os animais', () async {
+      when(mockApiService.buscarAnimais(any)).thenAnswer((_) async => [
+            Animal(
+              nome: 'Ralfi',
+              especie: 'Cachorro',
+              raca: 'Labrador',
+              foto: 'https://i.ibb.co/xY07zW7/dog.png',
+              localizacao: '',
+            ),
+          ]);
+
+      var listenerCalled = false;
+      viewModel.addListener(() => listenerCalled = true);
+
+      await viewModel.buscarAnimais();
+
+      expect(listenerCalled, true);
+    });
+
+    test('deve definir carregando como true durante a busca', () async {
+      when(mockApiService.buscarAnimais(any)).thenAnswer((_) async => []);
+
+      final future = viewModel.buscarAnimais();
+      expect(viewModel.carregando, true);
+
+      await future;
+      expect(viewModel.carregando, false);
     });
   });
 }

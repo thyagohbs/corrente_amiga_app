@@ -17,7 +17,12 @@ class ListaAnimaisViewModel with ChangeNotifier {
   String? _erro;
   String? get erro => _erro;
 
+  int _paginaAtual = 1;
+  bool _temMaisItens = true;
+
   Future<void> buscarAnimais() async {
+    if (!_temMaisItens) return;
+
     _carregando = true;
     _erro = null;
     notifyListeners();
@@ -26,10 +31,17 @@ class ListaAnimaisViewModel with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
 
-      if (token != null) {
-        _animais = await apiService.buscarAnimais(token);
-      } else {
+      if (token == null || token.isEmpty) {
         _erro = 'Usuário não autenticado!';
+        return;
+      }
+
+      final novosAnimais = await apiService.buscarAnimais(token);
+      if (novosAnimais.isEmpty) {
+        _temMaisItens = false;
+      } else {
+        _animais.addAll(novosAnimais);
+        _paginaAtual++;
       }
     } catch (e) {
       _erro = 'Erro ao buscar animais: $e';
@@ -37,5 +49,12 @@ class ListaAnimaisViewModel with ChangeNotifier {
       _carregando = false;
       notifyListeners();
     }
+  }
+
+  Future<void> refresh() async {
+    _paginaAtual = 1;
+    _temMaisItens = true;
+    _animais.clear();
+    await buscarAnimais();
   }
 }

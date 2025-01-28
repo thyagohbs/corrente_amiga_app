@@ -3,13 +3,13 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
 import 'package:app/models/animal.dart' as _i6;
 import 'package:app/services/api_service.dart' as _i3;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -39,6 +39,23 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
   }
 
   @override
+  String get baseUrl =>
+      (super.noSuchMethod(
+            Invocation.getter(#baseUrl),
+            returnValue: _i4.dummyValue<String>(
+              this,
+              Invocation.getter(#baseUrl),
+            ),
+          )
+          as String);
+
+  @override
+  set baseUrl(String? _baseUrl) => super.noSuchMethod(
+    Invocation.setter(#baseUrl, _baseUrl),
+    returnValueForMissingStub: null,
+  );
+
+  @override
   _i2.Client get client =>
       (super.noSuchMethod(
             Invocation.getter(#client),
@@ -47,36 +64,52 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           as _i2.Client);
 
   @override
-  _i4.Future<void> registrarUsuario(
+  _i5.Future<void> registrarUsuario(
     String? nome,
     String? email,
     String? senha,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#registrarUsuario, [nome, email, senha]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
 
   @override
-  _i4.Future<String> login(String? email, String? senha) =>
+  _i5.Future<String> login(String? email, String? senha) =>
       (super.noSuchMethod(
             Invocation.method(#login, [email, senha]),
-            returnValue: _i4.Future<String>.value(
-              _i5.dummyValue<String>(
+            returnValue: _i5.Future<String>.value(
+              _i4.dummyValue<String>(
                 this,
                 Invocation.method(#login, [email, senha]),
               ),
             ),
           )
-          as _i4.Future<String>);
+          as _i5.Future<String>);
 
   @override
-  _i4.Future<List<_i6.Animal>> buscarAnimais(String? token) =>
+  _i5.Future<List<_i6.Animal>> buscarAnimais(String? token) =>
       (super.noSuchMethod(
             Invocation.method(#buscarAnimais, [token]),
-            returnValue: _i4.Future<List<_i6.Animal>>.value(<_i6.Animal>[]),
+            returnValue: _i5.Future<List<_i6.Animal>>.value(<_i6.Animal>[]),
           )
-          as _i4.Future<List<_i6.Animal>>);
+          as _i5.Future<List<_i6.Animal>>);
+
+  @override
+  _i5.Future<dynamic> post(String? endpoint, Map<String, dynamic>? body) =>
+      (super.noSuchMethod(
+            Invocation.method(#post, [endpoint, body]),
+            returnValue: _i5.Future<dynamic>.value(),
+          )
+          as _i5.Future<dynamic>);
+
+  @override
+  _i5.Future<dynamic> get(String? endpoint, {String? token}) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [endpoint], {#token: token}),
+            returnValue: _i5.Future<dynamic>.value(),
+          )
+          as _i5.Future<dynamic>);
 }

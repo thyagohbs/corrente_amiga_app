@@ -12,54 +12,72 @@ class DetalhesAnimalScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(animal.nome),
       ),
-      body: SingleChildScrollView(
-        // Para permitir rolagem se o conteúdo for muito grande
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Imagem do animal
-              Center(
-                child: Image.network(
-                  animal.foto,
-                  height: 200,
-                  width: 200,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              Text(
-                'Nome: ${animal.nome}',
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text('Espécie: ${animal.especie}'),
-              const SizedBox(height: 8),
-              Text('Raça: ${animal.raca}'),
-              const SizedBox(height: 8),
-              Text('Idade: ${animal.idade}'),
-              const SizedBox(height: 8),
-              const Text(
-                'Descrição:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(animal.descricao ?? ''), // Descrição pode ser nula
-              const SizedBox(height: 16),
-
-              // Botão de contato
-              ElevatedButton(
-                onPressed: () {
-                  // Lógica para entrar em contato com o responsável
-                },
-                child: const Text('Entrar em Contato'),
-              ),
-            ],
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          Center(
+            child: Image.network(
+              animal.foto,
+              height: 200,
+              width: 200,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(Icons.pets, size: 100); // Ícone de fallback
+              },
+            ),
           ),
-        ),
+          const SizedBox(height: 16),
+          Card(
+            elevation: 4,
+            margin: EdgeInsets.all(8),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Nome: ${animal.nome}',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text('Espécie: ${animal.especie}'),
+                  SizedBox(height: 8),
+                  Text('Raça: ${animal.raca ?? "Não informada"}'),
+                  SizedBox(height: 8),
+                  Text('Idade: ${animal.idade ?? "Não informada"}'),
+                  SizedBox(height: 8),
+                  Text(
+                    'Descrição:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text(animal.descricao ?? 'Nenhuma descrição disponível.'),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text('Entrar em Contato'),
+                    content: Text('Formulário de contato aqui...'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text('Fechar'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            child: const Text('Entrar em Contato'),
+          ),
+        ],
       ),
     );
   }

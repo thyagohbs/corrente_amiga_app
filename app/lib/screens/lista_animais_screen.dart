@@ -17,6 +17,9 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ListaAnimaisViewModel>().buscarAnimais();
+    });
   }
 
   @override
@@ -25,39 +28,43 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
       appBar: AppBar(
         title: const Text('Animais para Adoção'),
       ),
-      body: Consumer<ListaAnimaisViewModel>(
-        builder: (context, viewModel, child) {
-          viewModel.buscarAnimais();
-
-          if (viewModel.carregando) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (viewModel.carregando) {
-            return Center(child: Text('Erro: ${viewModel.erro}'));
-          } else if (viewModel.animais.isEmpty) {
-            return const Center(child: Text('Nenhum animal encontrado.'));
-          } else {
-            return ListView.builder(
-              itemCount: viewModel.animais.length,
-              itemBuilder: (context, index) {
-                final animal = viewModel.animais[index];
-
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            DetalhesAnimalScreen(animal: animal),
-                      ),
-                    );
-                  },
-                  child: AnimalCard(
-                      animal: animal, imageProvider: widget.imageProvider),
-                );
-              },
-            );
-          }
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await context.read<ListaAnimaisViewModel>().buscarAnimais();
         },
+        child: Consumer<ListaAnimaisViewModel>(
+          builder: (context, viewModel, child) {
+            if (viewModel.carregando) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (viewModel.erro != null) {
+              return Center(child: Text('Erro: ${viewModel.erro}'));
+            } else if (viewModel.animais.isEmpty) {
+              return const Center(child: Text('Nenhum animal encontrado.'));
+            } else {
+              return ListView.builder(
+                itemCount: viewModel.animais.length,
+                itemBuilder: (context, index) {
+                  final animal = viewModel.animais[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DetalhesAnimalScreen(animal: animal),
+                        ),
+                      );
+                    },
+                    child: AnimalCard(
+                      animal: animal,
+                      imageProvider: widget.imageProvider,
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }

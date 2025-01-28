@@ -16,29 +16,124 @@ void main() {
     apiService = ApiService(client: mockClient);
   });
 
+  group('registrarUsuario', () {
+    test('deve registrar um usuário com sucesso', () async {
+      when(mockClient.post(
+        Uri.parse('http://localhost:3333/api/registrar'),
+        headers: anyNamed('headers'),
+        body: anyNamed('body'),
+      )).thenAnswer((_) async => http.Response('', 200));
+
+      await apiService.registrarUsuario('Teste', 'teste@teste.com', '123456');
+      verify(mockClient.post(
+        Uri.parse('http://localhost:3333/api/registrar'),
+        headers: anyNamed('headers'),
+        body: anyNamed('body'),
+      )).called(1);
+    });
+
+    test('deve lançar uma exceção quando o registro falhar', () async {
+      when(mockClient.post(
+        Uri.parse('http://localhost:3333/api/registrar'),
+        headers: anyNamed('headers'),
+        body: anyNamed('body'),
+      )).thenAnswer((_) async => http.Response('', 400));
+
+      expect(
+        () async => await apiService.registrarUsuario(
+            'Teste', 'teste@teste.com', '123456'),
+        throwsException,
+      );
+    });
+  });
+
+  group('login', () {
+    test('deve retornar um token quando o login for bem-sucedido', () async {
+      when(mockClient.post(
+        Uri.parse('http://localhost:3333/api/login'),
+        headers: anyNamed('headers'),
+        body: anyNamed('body'),
+      )).thenAnswer((_) async => http.Response('{"token": "fake_token"}', 200));
+
+      final token = await apiService.login('teste@teste.com', '123456');
+      expect(token, 'fake_token');
+    });
+
+    test('deve lançar uma exceção quando o login falhar', () async {
+      when(mockClient.post(
+        Uri.parse('http://localhost:3333/api/login'),
+        headers: anyNamed('headers'),
+        body: anyNamed('body'),
+      )).thenAnswer((_) async => http.Response('', 400));
+
+      expect(
+        () async => await apiService.login('teste@teste.com', '123456'),
+        throwsException,
+      );
+    });
+  });
+
   group('buscarAnimais', () {
     test(
-      'deve retornar uma lista de animais quando a chamada da API for bem-sucedida',
-      () async {
-        when(mockClient.post(Uri.parse('${ApiService.baseUrl}/login'),
-                body: anyNamed('body')))
-            .thenAnswer((_) async => http.Response(
-                '{"token": "oat_Mw.ZC0waHlIYnF6WUlUYWI0bElfeEcwMndWbnI3cnpjZXlpcEk0RHpfMzk4MjY2NjEwOQ"}',
-                200));
+        'deve retornar uma lista de animais quando a chamada da API for bem-sucedida',
+        () async {
+      when(mockClient.post(
+        Uri.parse('http://localhost:3333/api/login'),
+        headers: anyNamed('headers'),
+        body: anyNamed('body'),
+      )).thenAnswer((_) async => http.Response('{"token": "fake_token"}', 200));
 
-        final token = await apiService.login('teste@teste.com', '123456');
+      final token = await apiService.login('teste@teste.com', '123456');
 
-        when(mockClient.get(Uri.parse('${ApiService.baseUrl}/animais'),
-                headers: anyNamed('headers')))
-            .thenAnswer((_) async => http.Response(
-                '[{"nome": "Ralfi", "especie": "Cachorro", "raca": "Labrador", "foto": "https://i.ibb.co/xY07zW7/dog.png"}]',
-                200));
+      when(mockClient.get(
+        Uri.parse('http://localhost:3333/api/animais'),
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => http.Response(
+            '[{"nome": "Ralfi", "especie": "Cachorro", "raca": "Labrador", "foto": "https://i.ibb.co/xY07zW7/dog.png"}]',
+            200,
+          ));
 
-        final animais = await apiService.buscarAnimais(token);
-        expect(animais, isA<List<Animal>>());
-        expect(animais.length, 1);
-        expect(animais[0].nome, 'Ralfi');
-      },
-    );
+      final animais = await apiService.buscarAnimais(token);
+      expect(animais, isA<List<Animal>>());
+      expect(animais.length, 1);
+      expect(animais[0].nome, 'Ralfi');
+    });
+
+    test('deve lançar uma exceção quando a resposta da API for inválida',
+        () async {
+      when(mockClient.get(
+        Uri.parse('http://localhost:3333/api/animais'),
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => http.Response('invalid_json', 200));
+
+      expect(
+        () async => await apiService.buscarAnimais('fake_token'),
+        throwsException,
+      );
+    });
+
+    test('deve lançar uma exceção quando o token for inválido', () async {
+      when(mockClient.get(
+        Uri.parse('http://localhost:3333/api/animais'),
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => http.Response('', 401));
+
+      expect(
+        () async => await apiService.buscarAnimais('fake_token'),
+        throwsException,
+      );
+    });
+
+    test('deve lançar uma exceção quando a requisição demorar muito', () async {
+      when(mockClient.get(
+        Uri.parse('${ApiService}/animais'),
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => Future.delayed(Duration(seconds: 11)));
+
+      expect(
+        () async => await apiService.buscarAnimais('fake_token'),
+        throwsException,
+      );
+    });
   });
 }

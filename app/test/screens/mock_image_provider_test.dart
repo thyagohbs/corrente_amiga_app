@@ -14,7 +14,9 @@ class MockImageProvider extends Mock implements ImageProvider {
 
   @override
   Future<Codec> load(Object key, ImageDecoderCallback decode) {
-    // Retorna um Codec falso que já está pronto
-    return instantiateImageCodec(Uint8List(0));
+    // Simula o carregamento de uma imagem
+    return instantiateImageCodec(Uint8List.fromList([
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // Cabeçalho PNG
+    ]));
   }
 }
