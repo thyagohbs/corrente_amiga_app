@@ -17,7 +17,7 @@ class AnimalCard extends StatelessWidget {
     required this.imageProvider,
     this.showDetailsButton = true,
     this.onTap,
-  }) : assert(imageProvider != null, 'O imageProvider não pode ser nulo.');
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class AnimalCard extends StatelessWidget {
               ),
             ),
             if (showDetailsButton)
-              ButtonBar(
+              OverflowBar(
                 children: <Widget>[
                   TextButton(
                     onPressed: onTap,

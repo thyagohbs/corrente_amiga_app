@@ -22,9 +22,10 @@ void main() {
         Uri.parse('http://localhost:3333/api/registrar'),
         headers: anyNamed('headers'),
         body: anyNamed('body'),
-      )).thenAnswer((_) async => http.Response('', 200));
+      )).thenAnswer((_) async => http.Response('{"message": "success"}', 200));
 
       await apiService.registrarUsuario('Teste', 'teste@teste.com', '123456');
+
       verify(mockClient.post(
         Uri.parse('http://localhost:3333/api/registrar'),
         headers: anyNamed('headers'),
@@ -43,6 +44,20 @@ void main() {
         () async => await apiService.registrarUsuario(
             'Teste', 'teste@teste.com', '123456'),
         throwsException,
+      );
+    });
+
+    test('deve lançar uma exceção quando a resposta for vazia', () async {
+      when(mockClient.post(
+        Uri.parse('http://localhost:3333/api/registrar'),
+        headers: anyNamed('headers'),
+        body: anyNamed('body'),
+      )).thenAnswer((_) async => http.Response('', 200));
+
+      expect(
+        () async => await apiService.registrarUsuario(
+            'Teste', 'teste@teste.com', '123456'),
+        throwsA(isA<Exception>()),
       );
     });
   });
@@ -65,6 +80,19 @@ void main() {
         headers: anyNamed('headers'),
         body: anyNamed('body'),
       )).thenAnswer((_) async => http.Response('', 400));
+
+      expect(
+        () async => await apiService.login('teste@teste.com', '123456'),
+        throwsException,
+      );
+    });
+
+    test('deve lançar uma exceção quando o JSON for inválido', () async {
+      when(mockClient.post(
+        Uri.parse('http://localhost:3333/api/login'),
+        headers: anyNamed('headers'),
+        body: anyNamed('body'),
+      )).thenAnswer((_) async => http.Response('{invalid_json_format}', 200));
 
       expect(
         () async => await apiService.login('teste@teste.com', '123456'),
@@ -126,9 +154,22 @@ void main() {
 
     test('deve lançar uma exceção quando a requisição demorar muito', () async {
       when(mockClient.get(
-        Uri.parse('${ApiService}/animais'),
+        Uri.parse('http://localhost:3333/api/animais'),
         headers: anyNamed('headers'),
-      )).thenAnswer((_) async => Future.delayed(Duration(seconds: 11)));
+      )).thenAnswer((_) async =>
+          Future.delayed(Duration(seconds: 11), () => http.Response('', 408)));
+
+      expect(
+        () async => await apiService.buscarAnimais('fake_token'),
+        throwsException,
+      );
+    });
+
+    test('deve lançar uma exceção quando a resposta for vazia', () async {
+      when(mockClient.get(
+        Uri.parse('http://localhost:3333/api/animais'),
+        headers: anyNamed('headers'),
+      )).thenAnswer((_) async => http.Response('', 200));
 
       expect(
         () async => await apiService.buscarAnimais('fake_token'),

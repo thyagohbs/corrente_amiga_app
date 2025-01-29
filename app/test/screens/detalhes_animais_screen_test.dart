@@ -31,10 +31,10 @@ void main() {
       ),
     );
 
-    expect(find.text('Rex'), findsOneWidget);
-    expect(find.text('Cachorro'), findsOneWidget);
-    expect(find.text('Pastor alemão'), findsOneWidget);
-    expect(find.text('3'), findsOneWidget);
+    expect(find.text('Nome: Rex'), findsOneWidget);
+    expect(find.text('Espécie: Cachorro'), findsOneWidget);
+    expect(find.text('Raça: Pastor alemão'), findsOneWidget);
+    expect(find.text('Idade: 3'), findsOneWidget);
     expect(find.text('Amigável e brincalhão!'), findsOneWidget);
   });
 

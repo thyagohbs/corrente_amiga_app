@@ -8,7 +8,7 @@ class ListaAnimaisViewModel with ChangeNotifier {
 
   ListaAnimaisViewModel({required this.apiService});
 
-  List<Animal> _animais = [];
+  final List<Animal> _animais = [];
   List<Animal> get animais => _animais;
 
   bool _carregando = false;

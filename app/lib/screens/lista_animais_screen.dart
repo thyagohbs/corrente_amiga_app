@@ -37,9 +37,10 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
             if (viewModel.carregando) {
               return const Center(child: CircularProgressIndicator());
             } else if (viewModel.erro != null) {
-              return Center(child: Text('Erro: ${viewModel.erro}'));
+              return Center(child: Text('Erro ao carregar animais'));
             } else if (viewModel.animais.isEmpty) {
-              return const Center(child: Text('Nenhum animal encontrado.'));
+              return const Center(
+                  child: Text('Ocorreu um erro ao carregar os animais!'));
             } else {
               return ListView.builder(
                 itemCount: viewModel.animais.length,

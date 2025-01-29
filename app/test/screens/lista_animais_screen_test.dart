@@ -54,7 +54,8 @@ void main() {
       ),
     );
 
-    expect(find.text('Nenhum animal encontrado.'), findsOneWidget);
+    expect(
+        find.text('Ocorreu um erro ao carregar os animais!'), findsOneWidget);
   });
 
   testWidgets('deve exibir a lista de animais quando houver animais',
@@ -89,7 +90,7 @@ void main() {
   testWidgets('deve exibir mensagem de erro quando ocorrer um erro',
       (WidgetTester tester) async {
     when(mockViewModel.carregando).thenReturn(false);
-    when(mockViewModel.erro).thenReturn('Erro ao carregar animais');
+    when(mockViewModel.erro).thenReturn('Erro ao carregar animais!');
     when(mockViewModel.animais).thenReturn([]);
 
     final mockImageProvider = MockImageProvider();

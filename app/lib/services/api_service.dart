@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:app/models/animal.dart';
 import 'package:http/http.dart' as http;
@@ -9,42 +10,63 @@ class BaseApiService {
   BaseApiService({http.Client? client}) : client = client ?? http.Client();
 
   Future<dynamic> post(String endpoint, Map<String, dynamic> body) async {
-    final response = await client
-        .post(
-          Uri.parse('$baseUrl/$endpoint'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(body),
-        )
-        .timeout(Duration(seconds: 10));
+    try {
+      final response = await client
+          .post(
+            Uri.parse('$baseUrl/$endpoint'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(body),
+          )
+          .timeout(Duration(seconds: 10));
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Erro na requisição: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          throw Exception('Resposta vazia da API');
+        }
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Erro na requisição: ${response.statusCode}');
+      }
+    } on FormatException catch (e) {
+      throw Exception('Erro ao decodificar JSON: $e');
+    } on http.ClientException catch (e) {
+      throw Exception('Erro de conexão: $e');
+    } on TimeoutException catch (e) {
+      throw Exception('Timeout: $e');
     }
   }
 
   Future<dynamic> get(String endpoint, {String? token}) async {
-    final Map<String, String> headers =
-        token != null ? {'Authorization': 'Bearer $token'} : {};
-    final response = await client
-        .get(
-          Uri.parse('$baseUrl/$endpoint'),
-          headers: headers,
-        )
-        .timeout(Duration(seconds: 10));
+    try {
+      final Map<String, String> headers =
+          token != null ? {'Authorization': 'Bearer $token'} : {};
+      final response = await client
+          .get(
+            Uri.parse('$baseUrl/$endpoint'),
+            headers: headers,
+          )
+          .timeout(Duration(seconds: 10));
 
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Erro na requisição: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        if (response.body.isEmpty) {
+          throw Exception('Resposta vazia da API');
+        }
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Erro na requisição: ${response.statusCode}');
+      }
+    } on FormatException catch (e) {
+      throw Exception('Erro ao decodificar JSON: $e');
+    } on http.ClientException catch (e) {
+      throw Exception('Erro de conexão: $e');
+    } on TimeoutException catch (e) {
+      throw Exception('Timeout: $e');
     }
   }
 }
 
 class ApiService extends BaseApiService {
-  ApiService({http.Client? client}) : super(client: client);
-  String baseUrl = "";
+  ApiService({super.client});
 
   Future<void> registrarUsuario(String nome, String email, String senha) async {
     await post('registrar', {
@@ -59,6 +81,10 @@ class ApiService extends BaseApiService {
       'email': email,
       'senha': senha,
     });
+
+    if (response == null || response.isEmpty) {
+      throw Exception('Resposta vazia da API');
+    }
     return response['token'];
   }
 
