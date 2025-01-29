@@ -16,6 +16,7 @@ class ListaAnimaisViewModel with ChangeNotifier {
 
   String? _erro;
   String? get erro => _erro;
+  String? _filtroLocalizacao;
 
   int _paginaAtual = 1;
   bool _temMaisItens = true;
@@ -49,6 +50,18 @@ class ListaAnimaisViewModel with ChangeNotifier {
       _carregando = false;
       notifyListeners();
     }
+  }
+
+  /// Filtra os animais por localização
+  void filtrarAnimais(String? localizacao) {
+    _filtroLocalizacao = localizacao;
+    if (localizacao == null || localizacao.isEmpty) {
+      // Remove o filtro
+      notifyListeners();
+      return;
+    }
+    _animais.removeWhere((animal) => animal.localizacao != localizacao);
+    notifyListeners();
   }
 
   Future<void> refresh() async {

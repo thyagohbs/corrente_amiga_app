@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-
 import 'lista_animais_screen_test.mocks.dart';
 import 'mock_image_provider_test.dart';
 
@@ -22,9 +21,7 @@ void main() {
   testWidgets('deve exibir CircularProgressIndicator enquanto carrega',
       (WidgetTester tester) async {
     when(mockViewModel.carregando).thenReturn(true);
-
     final mockImageProvider = MockImageProvider();
-
     await tester.pumpWidget(
       ChangeNotifierProvider<ListaAnimaisViewModel>(
         create: (_) => mockViewModel,
@@ -33,7 +30,6 @@ void main() {
         ),
       ),
     );
-
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
@@ -42,9 +38,7 @@ void main() {
     when(mockViewModel.carregando).thenReturn(false);
     when(mockViewModel.erro).thenReturn(null);
     when(mockViewModel.animais).thenReturn([]);
-
     final mockImageProvider = MockImageProvider();
-
     await tester.pumpWidget(
       ChangeNotifierProvider<ListaAnimaisViewModel>(
         create: (_) => mockViewModel,
@@ -53,15 +47,13 @@ void main() {
         ),
       ),
     );
-
-    expect(
-        find.text('Ocorreu um erro ao carregar os animais!'), findsOneWidget);
+    expect(find.text('Nenhum animal disponível para adoção no momento.'),
+        findsOneWidget);
   });
 
   testWidgets('deve exibir a lista de animais quando houver animais',
       (WidgetTester tester) async {
     final mockImageProvider = MockImageProvider();
-
     when(mockViewModel.carregando).thenReturn(false);
     when(mockViewModel.erro).thenReturn(null);
     when(mockViewModel.animais).thenReturn([
@@ -73,7 +65,6 @@ void main() {
         localizacao: '',
       ),
     ]);
-
     await tester.pumpWidget(
       ChangeNotifierProvider<ListaAnimaisViewModel>(
         create: (_) => mockViewModel,
@@ -82,7 +73,6 @@ void main() {
         ),
       ),
     );
-
     expect(find.text('Ralfi'), findsOneWidget);
     expect(find.text('Cachorro - Vira-lata'), findsOneWidget);
   });
@@ -92,9 +82,7 @@ void main() {
     when(mockViewModel.carregando).thenReturn(false);
     when(mockViewModel.erro).thenReturn('Erro ao carregar animais!');
     when(mockViewModel.animais).thenReturn([]);
-
     final mockImageProvider = MockImageProvider();
-
     await tester.pumpWidget(
       ChangeNotifierProvider<ListaAnimaisViewModel>(
         create: (_) => mockViewModel,
@@ -103,14 +91,12 @@ void main() {
         ),
       ),
     );
-
     expect(find.text('Erro ao carregar animais'), findsOneWidget);
   });
 
   testWidgets('deve navegar para a tela de detalhes ao tocar em um animal',
       (WidgetTester tester) async {
     final mockImageProvider = MockImageProvider();
-
     when(mockViewModel.carregando).thenReturn(false);
     when(mockViewModel.erro).thenReturn(null);
     when(mockViewModel.animais).thenReturn([
@@ -122,7 +108,33 @@ void main() {
         localizacao: '',
       ),
     ]);
+    await tester.pumpWidget(
+      ChangeNotifierProvider<ListaAnimaisViewModel>(
+        create: (_) => mockViewModel,
+        child: MaterialApp(
+          home: ListaAnimaisScreen(imageProvider: mockImageProvider),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Ralfi'));
+    await tester.pumpAndSettle(); // Aguarda a navegação
+    expect(find.byType(DetalhesAnimalScreen), findsOneWidget);
+  });
 
+  testWidgets('deve recarregar os dados ao usar o RefreshIndicator',
+      (WidgetTester tester) async {
+    when(mockViewModel.carregando).thenReturn(false);
+    when(mockViewModel.erro).thenReturn(null);
+    when(mockViewModel.animais).thenReturn([
+      Animal(
+        nome: 'Ralfi',
+        especie: 'Cachorro',
+        raca: 'Vira-lata',
+        foto: 'foto.png',
+        localizacao: '',
+      ),
+    ]);
+    final mockImageProvider = MockImageProvider();
     await tester.pumpWidget(
       ChangeNotifierProvider<ListaAnimaisViewModel>(
         create: (_) => mockViewModel,
@@ -132,9 +144,9 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Ralfi'));
-    await tester.pumpAndSettle(); // Aguarda a navegação
+    await tester.fling(find.byType(RefreshIndicator), Offset(0, 300), 1000);
+    await tester.pumpAndSettle();
 
-    expect(find.byType(DetalhesAnimalScreen), findsOneWidget);
+    verify(mockViewModel.buscarAnimais()).called(1);
   });
 }

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 /// Pode ser clicável se um [onTap] for fornecido.
 class AnimalCard extends StatelessWidget {
   final Animal animal;
-  final ImageProvider imageProvider;
+  final ImageProvider? imageProvider;
   final bool showDetailsButton;
   final VoidCallback? onTap;
 
@@ -21,42 +21,55 @@ class AnimalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color statusColor = animal.isMissing ? Colors.red : Colors.green;
+
     return InkWell(
       onTap: onTap,
       child: Card(
         elevation: 4,
         margin: EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
               leading: CircleAvatar(
-                backgroundImage: imageProvider,
                 radius: 30,
-                child: imageProvider == null ? Icon(Icons.pets) : null,
+                backgroundImage: imageProvider,
+                onBackgroundImageError: (_, __) {
+                  // Não retorna nada aqui, pois o callback não permite retorno
+                },
+                child: imageProvider == null
+                    ? Icon(Icons.pets, size: 40, color: Colors.grey)
+                    : null, // Fallback para quando a imagem falhar
               ),
-              title: Text(
-                animal.nome,
-                style: TextStyle(fontWeight: FontWeight.bold),
+              title: Flexible(
+                child: Text(
+                  animal.nome,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${animal.especie} - ${animal.raca}'),
-                  Text('Localização: ${animal.localizacao}'),
+                  Text('${animal.especie} - ${animal.raca ?? "Não informada"}'),
+                  Text('Idade: ${animal.idade ?? "Não informada"}'),
+                  Text('Localização: ${animal.localizacao ?? "Não informada"}'),
                   Text(
                     animal.isMissing
                         ? 'Desaparecido'
                         : 'Disponível para adoção',
-                    style: TextStyle(
-                      color: animal.isMissing ? Colors.red : Colors.green,
-                    ),
+                    style: TextStyle(color: statusColor),
                   ),
                 ],
               ),
             ),
             if (showDetailsButton)
               OverflowBar(
+                alignment: MainAxisAlignment.end,
                 children: <Widget>[
                   TextButton(
                     onPressed: onTap,

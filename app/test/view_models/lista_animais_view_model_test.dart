@@ -19,13 +19,7 @@ void main() {
 
   group('buscarAnimais', () {
     test('deve carregar os animais e notificar os listeners', () async {
-      when(mockApiService.login('teste@teste.com', '123456'))
-          .thenAnswer((_) async => 'fake_token');
-
-      // Mockar SharedPreferences para retornar o token
       SharedPreferences.setMockInitialValues({'token': 'fake_token'});
-
-      // Mockar a resposta da API
       when(mockApiService.buscarAnimais('fake_token')).thenAnswer((_) async => [
             Animal(
               nome: 'Ralfi',
@@ -36,10 +30,8 @@ void main() {
             ),
           ]);
 
-      // Chamar a função que estamos testando
       await viewModel.buscarAnimais();
 
-      // Verificar se o estado do viewModel foi atualizado corretamente
       expect(viewModel.carregando, false);
       expect(viewModel.animais.length, 1);
       expect(viewModel.animais[0].nome, 'Ralfi');
@@ -57,7 +49,7 @@ void main() {
     });
 
     test('deve definir erro quando o token for nulo', () async {
-      SharedPreferences.setMockInitialValues({}); // Token nulo
+      SharedPreferences.setMockInitialValues({});
 
       await viewModel.buscarAnimais();
 

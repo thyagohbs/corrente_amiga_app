@@ -18,14 +18,16 @@ class BaseApiService {
             body: jsonEncode(body),
           )
           .timeout(Duration(seconds: 10));
-
       if (response.statusCode == 200) {
         if (response.body.isEmpty) {
           throw Exception('Resposta vazia da API');
         }
         return jsonDecode(response.body);
       } else {
-        throw Exception('Erro na requisição: ${response.statusCode}');
+        final errorMessage =
+            jsonDecode(response.body)['message'] ?? 'Erro desconhecido';
+        throw Exception(
+            'Erro na requisição (${response.statusCode}): $errorMessage');
       }
     } on FormatException catch (e) {
       throw Exception('Erro ao decodificar JSON: $e');
@@ -46,14 +48,16 @@ class BaseApiService {
             headers: headers,
           )
           .timeout(Duration(seconds: 10));
-
       if (response.statusCode == 200) {
         if (response.body.isEmpty) {
           throw Exception('Resposta vazia da API');
         }
         return jsonDecode(response.body);
       } else {
-        throw Exception('Erro na requisição: ${response.statusCode}');
+        final errorMessage =
+            jsonDecode(response.body)['message'] ?? 'Erro desconhecido';
+        throw Exception(
+            'Erro na requisição (${response.statusCode}): $errorMessage');
       }
     } on FormatException catch (e) {
       throw Exception('Erro ao decodificar JSON: $e');
@@ -81,9 +85,10 @@ class ApiService extends BaseApiService {
       'email': email,
       'senha': senha,
     });
-
-    if (response == null || response.isEmpty) {
-      throw Exception('Resposta vazia da API');
+    if (response == null ||
+        response.isEmpty ||
+        !(response is Map<String, dynamic>)) {
+      throw Exception('Resposta inválida da API');
     }
     return response['token'];
   }
@@ -91,5 +96,39 @@ class ApiService extends BaseApiService {
   Future<List<Animal>> buscarAnimais(String token) async {
     final response = await get('animais', token: token);
     return (response as List).map((json) => Animal.fromJson(json)).toList();
+  }
+
+  Future<void> atualizarAnimal(String token, Animal animal) async {
+    await post('animais/${animal.id}', {
+      'nome': animal.nome,
+      'especie': animal.especie,
+      'raca': animal.raca,
+      'porte': animal.porte?.name,
+      'sexo': animal.sexo?.name,
+      'idade': animal.idade,
+      'descricao': animal.descricao,
+      'foto': animal.foto,
+      'localizacao': animal.localizacao,
+      'isMissing': animal.isMissing,
+    });
+  }
+
+  Future<void> excluirAnimal(String token, int animalId) async {
+    await client.delete(
+      Uri.parse('$BaseApiService.baseUrl/animais/$animalId'),
+      headers: {'Authorization': 'Bearer $token'},
+    ).timeout(Duration(seconds: 10));
+  }
+
+  Future<void> uploadFoto(String token, int animalId, String filePath) async {
+    final request = http.MultipartRequest(
+        'POST', Uri.parse('$BaseApiService.baseUrl/animais/$animalId/foto'))
+      ..headers['Authorization'] = 'Bearer $token'
+      ..files.add(await http.MultipartFile.fromPath('foto', filePath));
+
+    final response = await request.send().timeout(Duration(seconds: 10));
+    if (response.statusCode != 200) {
+      throw Exception('Erro ao enviar foto (${response.statusCode})');
+    }
   }
 }
