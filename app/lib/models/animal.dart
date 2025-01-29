@@ -58,6 +58,8 @@ class Animal {
     );
   }
 
+  get id => null;
+
   Map<String, dynamic> toJson() {
     return {
       'nome': nome,
