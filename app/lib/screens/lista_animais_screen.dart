@@ -60,7 +60,7 @@ class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Erro ao carregar animais: ${viewModel.erro}'),
+                          Text('Erro ao carregar animais!'),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {

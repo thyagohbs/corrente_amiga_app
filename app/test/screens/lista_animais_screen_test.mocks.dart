@@ -7,7 +7,7 @@ import 'dart:async' as _i5;
 import 'dart:ui' as _i6;
 
 import 'package:app/models/animal.dart' as _i4;
-import 'package:app/services/api_service.dart' as _i2;
+import 'package:app/screens/services/api_service.dart' as _i2;
 import 'package:app/view_models/lista_animais_view_model.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -27,7 +27,7 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeApiService_0 extends _i1.SmartFake implements _i2.ApiService {
   _FakeApiService_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [ListaAnimaisViewModel].
@@ -40,23 +40,19 @@ class MockListaAnimaisViewModel extends _i1.Mock
   }
 
   @override
-  _i2.ApiService get apiService =>
-      (super.noSuchMethod(
-            Invocation.getter(#apiService),
-            returnValue: _FakeApiService_0(
-              this,
-              Invocation.getter(#apiService),
-            ),
-          )
-          as _i2.ApiService);
+  _i2.ApiService get apiService => (super.noSuchMethod(
+        Invocation.getter(#apiService),
+        returnValue: _FakeApiService_0(
+          this,
+          Invocation.getter(#apiService),
+        ),
+      ) as _i2.ApiService);
 
   @override
-  List<_i4.Animal> get animais =>
-      (super.noSuchMethod(
-            Invocation.getter(#animais),
-            returnValue: <_i4.Animal>[],
-          )
-          as List<_i4.Animal>);
+  List<_i4.Animal> get animais => (super.noSuchMethod(
+        Invocation.getter(#animais),
+        returnValue: <_i4.Animal>[],
+      ) as List<_i4.Animal>);
 
   @override
   bool get carregando =>
@@ -69,44 +65,46 @@ class MockListaAnimaisViewModel extends _i1.Mock
           as bool);
 
   @override
-  _i5.Future<void> buscarAnimais() =>
-      (super.noSuchMethod(
-            Invocation.method(#buscarAnimais, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
-          )
-          as _i5.Future<void>);
+  _i5.Future<void> buscarAnimais() => (super.noSuchMethod(
+        Invocation.method(#buscarAnimais, []),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i5.Future<void> refresh() =>
-      (super.noSuchMethod(
-            Invocation.method(#refresh, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
-          )
-          as _i5.Future<void>);
+  void filtrarAnimais(String? localizacao) => super.noSuchMethod(
+        Invocation.method(#filtrarAnimais, [localizacao]),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i5.Future<void> refresh() => (super.noSuchMethod(
+        Invocation.method(#refresh, []),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   void addListener(_i6.VoidCallback? listener) => super.noSuchMethod(
-    Invocation.method(#addListener, [listener]),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#addListener, [listener]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void removeListener(_i6.VoidCallback? listener) => super.noSuchMethod(
-    Invocation.method(#removeListener, [listener]),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#removeListener, [listener]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void dispose() => super.noSuchMethod(
-    Invocation.method(#dispose, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#dispose, []),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void notifyListeners() => super.noSuchMethod(
-    Invocation.method(#notifyListeners, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#notifyListeners, []),
+        returnValueForMissingStub: null,
+      );
 }

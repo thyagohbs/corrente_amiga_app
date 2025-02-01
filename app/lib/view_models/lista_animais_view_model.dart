@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/animal.dart';
-import '../services/api_service.dart';
+import '../screens/services/api_service.dart';
 
 class ListaAnimaisViewModel with ChangeNotifier {
   final ApiService apiService;

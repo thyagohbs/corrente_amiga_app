@@ -1,20 +1,16 @@
-import 'package:app/models/animal.dart';
 import 'package:flutter/material.dart';
+import 'package:app/models/animal.dart';
 
-/// Widget que exibe um card com informações sobre um animal.
-///
-/// Recebe um [Animal] e um [ImageProvider] para exibir a imagem do animal.
-/// Pode ser clicável se um [onTap] for fornecido.
 class AnimalCard extends StatelessWidget {
   final Animal animal;
-  final ImageProvider? imageProvider;
+  final ImageProvider? imageProvider; // Torna o parâmetro opcional
   final bool showDetailsButton;
   final VoidCallback? onTap;
 
   const AnimalCard({
     super.key,
     required this.animal,
-    required this.imageProvider,
+    this.imageProvider, // Agora é opcional
     this.showDetailsButton = true,
     this.onTap,
   });
@@ -38,24 +34,22 @@ class AnimalCard extends StatelessWidget {
               leading: CircleAvatar(
                 radius: 30,
                 backgroundImage: imageProvider,
-                onBackgroundImageError: (_, __) {
-                  // Não retorna nada aqui, pois o callback não permite retorno
-                },
+                onBackgroundImageError: (_, __) {},
                 child: imageProvider == null
                     ? Icon(Icons.pets, size: 40, color: Colors.grey)
-                    : null, // Fallback para quando a imagem falhar
+                    : null,
               ),
-              title: Flexible(
-                child: Text(
-                  animal.nome,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                ),
+              title: Text(
+                animal.nome.isNotEmpty ? animal.nome : 'Sem nome',
+                style: TextStyle(fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${animal.especie} - ${animal.raca ?? "Não informada"}'),
+                  Text(
+                      '${animal.especie ?? "Espécie não informada"} - ${animal.raca ?? "Não informada"}'),
                   Text('Idade: ${animal.idade ?? "Não informada"}'),
                   Text('Localização: ${animal.localizacao ?? "Não informada"}'),
                   Text(

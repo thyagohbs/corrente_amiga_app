@@ -1,5 +1,3 @@
-import 'package:url_launcher/url_launcher.dart';
-
 enum Porte { pequeno, medio, grande }
 
 enum Sexo { macho, femea }

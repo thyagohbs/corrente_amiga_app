@@ -2,8 +2,18 @@ import 'package:app/models/animal.dart';
 import 'package:app/screens/detalhes_animal_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'detalhes_animais_screen_test.mocks.dart';
 
+@GenerateMocks([DetalhesAnimalScreen])
 void main() {
+  late MockDetalhesAnimalScreen mockDetalhesAnimalScreen;
+
+  setUp(() {
+    mockDetalhesAnimalScreen = MockDetalhesAnimalScreen();
+  });
+
   final animal = Animal(
     nome: 'Rex',
     especie: 'Cachorro',
