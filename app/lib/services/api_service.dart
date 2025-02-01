@@ -98,6 +98,13 @@ class ApiService extends BaseApiService {
     return (response as List).map((json) => Animal.fromJson(json)).toList();
   }
 
+  Future<List<Animal>> buscarAnimaisPaginados(
+      String token, int pagina, int limite) async {
+    final response =
+        await get('animais?pagina=$pagina&limite=$limite', token: token);
+    return (response as List).map((json) => Animal.fromJson(json)).toList();
+  }
+
   Future<void> atualizarAnimal(String token, Animal animal) async {
     await post('animais/${animal.id}', {
       'nome': animal.nome,

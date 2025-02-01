@@ -1,5 +1,5 @@
 import 'package:app/models/animal.dart';
-import 'package:app/screens/services/api_service.dart';
+import 'package:app/services/api_service.dart';
 import 'package:app/view_models/lista_animais_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:app/models/animal.dart';
-import 'package:app/screens/services/api_service.dart';
+import 'package:app/services/api_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -105,5 +105,55 @@ void main() {
         throwsException,
       );
     });
+  });
+
+  test('deve buscar animais paginados com sucesso', () async {
+    const token = 'fake_token';
+    const pagina = 1;
+    const limite = 10;
+
+    final mockResponse = [
+      {
+        'id': 1,
+        'nome': 'Ralfi',
+        'especie': 'Cachorro',
+        'raca': 'Vira-lata',
+        'foto': 'https://i.ibb.co/xY07zW7/dog.png',
+        'localizacao': 'São Paulo',
+        'isMissing': false,
+      },
+    ];
+
+    when(mockClient.get(
+      Uri.parse('http://localhost:3333/api/animais?pagina=1&limite=10'),
+      headers: {'Authorization': 'Bearer $token'},
+    )).thenAnswer((_) async => http.Response(
+          jsonEncode(mockResponse),
+          200,
+        ));
+
+    final animais =
+        await apiService.buscarAnimaisPaginados(token, pagina, limite);
+
+    expect(animais.length, 1);
+    expect(animais[0].nome, 'Ralfi');
+    expect(animais[0].especie, 'Cachorro');
+    expect(animais[0].foto, 'https://i.ibb.co/xY07zW7/dog.png');
+  });
+
+  test('deve lançar exceção ao falhar na requisição', () async {
+    const token = 'fake_token';
+    const pagina = 1;
+    const limite = 10;
+
+    when(mockClient.get(
+      Uri.parse('http://localhost:3333/api/animais?pagina=1&limite=10'),
+      headers: {'Authorization': 'Bearer $token'},
+    )).thenAnswer((_) async => http.Response('Erro interno', 500));
+
+    expect(
+      () => apiService.buscarAnimaisPaginados(token, pagina, limite),
+      throwsA(isA<Exception>()),
+    );
   });
 }

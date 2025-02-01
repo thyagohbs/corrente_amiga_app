@@ -3,12 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
-import 'dart:ui' as _i6;
+import 'dart:async' as _i4;
+import 'dart:ui' as _i5;
 
-import 'package:app/models/animal.dart' as _i4;
-import 'package:app/screens/services/api_service.dart' as _i2;
-import 'package:app/view_models/lista_animais_view_model.dart' as _i3;
+import 'package:app/models/animal.dart' as _i3;
+import 'package:app/view_models/lista_animais_view_model.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -25,34 +24,22 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeApiService_0 extends _i1.SmartFake implements _i2.ApiService {
-  _FakeApiService_0(Object parent, Invocation parentInvocation)
-      : super(parent, parentInvocation);
-}
-
 /// A class which mocks [ListaAnimaisViewModel].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockListaAnimaisViewModel extends _i1.Mock
-    implements _i3.ListaAnimaisViewModel {
+    implements _i2.ListaAnimaisViewModel {
   MockListaAnimaisViewModel() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.ApiService get apiService => (super.noSuchMethod(
-        Invocation.getter(#apiService),
-        returnValue: _FakeApiService_0(
-          this,
-          Invocation.getter(#apiService),
-        ),
-      ) as _i2.ApiService);
-
-  @override
-  List<_i4.Animal> get animais => (super.noSuchMethod(
-        Invocation.getter(#animais),
-        returnValue: <_i4.Animal>[],
-      ) as List<_i4.Animal>);
+  List<_i3.Animal> get animais =>
+      (super.noSuchMethod(
+            Invocation.getter(#animais),
+            returnValue: <_i3.Animal>[],
+          )
+          as List<_i3.Animal>);
 
   @override
   bool get carregando =>
@@ -65,46 +52,50 @@ class MockListaAnimaisViewModel extends _i1.Mock
           as bool);
 
   @override
-  _i5.Future<void> buscarAnimais() => (super.noSuchMethod(
-        Invocation.method(#buscarAnimais, []),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+  _i4.Future<void> buscarAnimais() =>
+      (super.noSuchMethod(
+            Invocation.method(#buscarAnimais, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   void filtrarAnimais(String? localizacao) => super.noSuchMethod(
-        Invocation.method(#filtrarAnimais, [localizacao]),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#filtrarAnimais, [localizacao]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  _i5.Future<void> refresh() => (super.noSuchMethod(
-        Invocation.method(#refresh, []),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+  _i4.Future<void> refresh() =>
+      (super.noSuchMethod(
+            Invocation.method(#refresh, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  void addListener(_i6.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(#addListener, [listener]),
-        returnValueForMissingStub: null,
-      );
+  void addListener(_i5.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
-  void removeListener(_i6.VoidCallback? listener) => super.noSuchMethod(
-        Invocation.method(#removeListener, [listener]),
-        returnValueForMissingStub: null,
-      );
+  void removeListener(_i5.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#removeListener, [listener]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void dispose() => super.noSuchMethod(
-        Invocation.method(#dispose, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void notifyListeners() => super.noSuchMethod(
-        Invocation.method(#notifyListeners, []),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
 }
