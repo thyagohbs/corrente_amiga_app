@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/animal.dart';
-import '../screens/services/api_service.dart';
+import '../services/api_service.dart';
 
 class ListaAnimaisViewModel with ChangeNotifier {
   final ApiService apiService;
@@ -16,10 +16,25 @@ class ListaAnimaisViewModel with ChangeNotifier {
 
   String? _erro;
   String? get erro => _erro;
+
+  String? _filtroEspecie;
   String? _filtroLocalizacao;
 
   int _paginaAtual = 1;
   bool _temMaisItens = true;
+
+  final Set<int> _favoritos = {};
+
+  Set<int> get favoritos => _favoritos;
+
+  void toggleFavorito(int animalId) {
+    if (_favoritos.contains(animalId)) {
+      _favoritos.remove(animalId);
+    } else {
+      _favoritos.add(animalId);
+    }
+    notifyListeners();
+  }
 
   Future<void> buscarAnimais() async {
     if (!_temMaisItens) return;
@@ -50,6 +65,12 @@ class ListaAnimaisViewModel with ChangeNotifier {
       _carregando = false;
       notifyListeners();
     }
+  }
+
+  void aplicarFiltros({String? especie, String? localizacao}) {
+    _filtroEspecie = especie;
+    _filtroLocalizacao = localizacao;
+    refresh();
   }
 
   /// Filtra os animais por localização

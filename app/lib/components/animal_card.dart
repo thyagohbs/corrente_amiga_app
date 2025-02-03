@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app/models/animal.dart';
+import 'package:app/view_models/lista_animais_view_model.dart';
+import 'package:provider/provider.dart';
 
 class AnimalCard extends StatelessWidget {
   final Animal animal;
@@ -17,6 +19,8 @@ class AnimalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<ListaAnimaisViewModel>(context);
+
     final Color statusColor = animal.isMissing ? Colors.red : Colors.green;
 
     return InkWell(
@@ -59,6 +63,17 @@ class AnimalCard extends StatelessWidget {
                     style: TextStyle(color: statusColor),
                   ),
                 ],
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  viewModel.favoritos.contains(animal.id)
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: Colors.red,
+                ),
+                onPressed: () {
+                  viewModel.toggleFavorito(animal.id);
+                },
               ),
             ),
             if (showDetailsButton)

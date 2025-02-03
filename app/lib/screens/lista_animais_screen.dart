@@ -1,3 +1,4 @@
+import 'package:app/components/filtro_animais.dart';
 import 'package:app/screens/detalhes_animal_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,117 +15,70 @@ class ListaAnimaisScreen extends StatefulWidget {
 }
 
 class _ListaAnimaisScreenState extends State<ListaAnimaisScreen> {
-  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ListaAnimaisViewModel>().buscarAnimais();
-    });
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final viewModel =
+        Provider.of<ListaAnimaisViewModel>(context, listen: false);
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !viewModel.carregando) {
+      viewModel.buscarAnimais();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Animais para Adoção'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Pesquisar por localização',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (query) {
-                context.read<ListaAnimaisViewModel>().filtrarAnimais(query);
-              },
-            ),
-          ),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await context.read<ListaAnimaisViewModel>().buscarAnimais();
-              },
-              child: Consumer<ListaAnimaisViewModel>(
-                builder: (context, viewModel, child) {
-                  if (viewModel.carregando) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (viewModel.erro != null) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Erro ao carregar animais!'),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              context
-                                  .read<ListaAnimaisViewModel>()
-                                  .buscarAnimais();
-                            },
-                            child: const Text('Tentar Novamente'),
-                          ),
-                        ],
-                      ),
-                    );
-                  } else if (viewModel.animais.isEmpty) {
-                    return const Center(
-                      child: Text(
-                          'Nenhum animal disponível para adoção no momento.'),
-                    );
-                  } else {
-                    return ListView.builder(
-                      itemCount: viewModel.animais.length,
-                      itemBuilder: (context, index) {
-                        final animal = viewModel.animais[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 16),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  pageBuilder: (context, animation,
-                                          secondaryAnimation) =>
-                                      DetalhesAnimalScreen(animal: animal),
-                                  transitionsBuilder: (context, animation,
-                                      secondaryAnimation, child) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: child,
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            child: Card(
-                              elevation: 4,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: AnimalCard(
-                                animal: animal,
-                                imageProvider: widget.imageProvider,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
+    final viewModel = Provider.of<ListaAnimaisViewModel>(context);
+
+    if (viewModel.carregando && viewModel.animais.isEmpty) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (viewModel.erro != null) {
+      return Center(child: Text(viewModel.erro!));
+    }
+
+    return Column(
+      children: [
+        FiltroAnimais(
+          onFiltrar: (especie, localizacao) {
+            viewModel.aplicarFiltros(
+                especie: especie, localizacao: localizacao);
+          },
+        ),
+        Expanded(
+          child: ListView.builder(
+              controller: _scrollController,
+              itemCount:
+                  viewModel.animais.length + (viewModel.carregando ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index < viewModel.animais.length) {
+                  final animal = viewModel.animais[index];
+                  return AnimalCard(
+                    animal: animal,
+                    imageProvider: widget.imageProvider,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DetalhesAnimalScreen(animal: animal),
+                        ),
+                      );
+                    },
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }),
+        ),
+      ],
     );
   }
 }

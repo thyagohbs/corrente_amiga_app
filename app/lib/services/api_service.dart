@@ -87,7 +87,7 @@ class ApiService extends BaseApiService {
     });
     if (response == null ||
         response.isEmpty ||
-        !(response is Map<String, dynamic>)) {
+        response is! Map<String, dynamic>) {
       throw Exception('Resposta inválida da API');
     }
     return response['token'];
@@ -102,6 +102,30 @@ class ApiService extends BaseApiService {
       String token, int pagina, int limite) async {
     final response =
         await get('animais?pagina=$pagina&limite=$limite', token: token);
+    return (response as List).map((json) => Animal.fromJson(json)).toList();
+  }
+
+  Future<List<Animal>> buscarAnimalComFiltro({
+    required String token,
+    String? especie,
+    String? localizacao,
+  }) async {
+    final queryParams = <String, dynamic>{};
+
+    if (especie != null && especie.isNotEmpty) {
+      queryParams['especie'] = especie;
+    }
+
+    if (localizacao != null && localizacao.isNotEmpty) {
+      queryParams['localizacao'] = localizacao;
+    }
+
+    final query = queryParams.entries
+        .map((entry) => '${entry.key}=${entry.value}')
+        .join('&');
+    final endpoint = 'animais${query.isNotEmpty ? '?$query' : ''}';
+
+    final response = await get(endpoint, token: token);
     return (response as List).map((json) => Animal.fromJson(json)).toList();
   }
 
@@ -137,5 +161,16 @@ class ApiService extends BaseApiService {
     if (response.statusCode != 200) {
       throw Exception('Erro ao enviar foto (${response.statusCode})');
     }
+  }
+
+  Future<void> adicionarFavorito(String token, int animalId) async {
+    await post('favoritos', {'animalId': animalId});
+  }
+
+  Future<void> removerFavorito(String token, int animalId) async {
+    await client.delete(
+      Uri.parse('$BaseApiService.baseUrl/favoritos/$animalId'),
+      headers: {'Authorization': 'Bearer $token'},
+    ).timeout(Duration(seconds: 10));
   }
 }
