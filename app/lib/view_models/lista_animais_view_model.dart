@@ -27,12 +27,27 @@ class ListaAnimaisViewModel with ChangeNotifier {
 
   Set<int> get favoritos => _favoritos;
 
+  Future<void> carregarFavoritos() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoritos = prefs.getStringList('favoritos') ?? [];
+    _favoritos.clear();
+    _favoritos.addAll(favoritos.map(int.parse));
+    notifyListeners();
+  }
+
+  Future<void> salvarFavoritos() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+        'favoritos', _favoritos.map((id) => id.toString()).toList());
+  }
+
   void toggleFavorito(int animalId) {
     if (_favoritos.contains(animalId)) {
       _favoritos.remove(animalId);
     } else {
       _favoritos.add(animalId);
     }
+    salvarFavoritos();
     notifyListeners();
   }
 

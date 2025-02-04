@@ -12,9 +12,11 @@ void main() {
   late ListaAnimaisViewModel viewModel;
   late MockApiService mockApiService;
 
-  setUp(() {
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     mockApiService = MockApiService();
     viewModel = ListaAnimaisViewModel(apiService: mockApiService);
+    await viewModel.carregarFavoritos();
   });
 
   group('buscarAnimais', () {
@@ -84,6 +86,25 @@ void main() {
 
       await future;
       expect(viewModel.carregando, false);
+    });
+
+    test('deve adicionar um animal aos favoritos', () async {
+      viewModel.toggleFavorito(1);
+      expect(viewModel.favoritos.contains(1), true);
+    });
+
+    test('deve remover um animal dos favoritos', () async {
+      viewModel.toggleFavorito(1);
+      viewModel.toggleFavorito(1);
+      expect(viewModel.favoritos.contains(1), false);
+    });
+
+    test('deve persistir os favoritos no SharedPreferences', () async {
+      viewModel.toggleFavorito(1);
+
+      final prefs = await SharedPreferences.getInstance();
+      final favoritosSalvos = prefs.getStringList('favoritos') ?? [];
+      expect(favoritosSalvos.contains('1'), true);
     });
   });
 }

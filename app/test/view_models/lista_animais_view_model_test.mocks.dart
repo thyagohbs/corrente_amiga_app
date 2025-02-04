@@ -93,6 +93,22 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
           as _i4.Future<List<_i6.Animal>>);
 
   @override
+  _i4.Future<List<_i6.Animal>> buscarAnimalComFiltro({
+    required String? token,
+    String? especie,
+    String? localizacao,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#buscarAnimalComFiltro, [], {
+              #token: token,
+              #especie: especie,
+              #localizacao: localizacao,
+            }),
+            returnValue: _i4.Future<List<_i6.Animal>>.value(<_i6.Animal>[]),
+          )
+          as _i4.Future<List<_i6.Animal>>);
+
+  @override
   _i4.Future<void> atualizarAnimal(String? token, _i6.Animal? animal) =>
       (super.noSuchMethod(
             Invocation.method(#atualizarAnimal, [token, animal]),
@@ -114,6 +130,24 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
   _i4.Future<void> uploadFoto(String? token, int? animalId, String? filePath) =>
       (super.noSuchMethod(
             Invocation.method(#uploadFoto, [token, animalId, filePath]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> adicionarFavorito(String? token, int? animalId) =>
+      (super.noSuchMethod(
+            Invocation.method(#adicionarFavorito, [token, animalId]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> removerFavorito(String? token, int? animalId) =>
+      (super.noSuchMethod(
+            Invocation.method(#removerFavorito, [token, animalId]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
