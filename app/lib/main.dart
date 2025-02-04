@@ -12,6 +12,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -31,6 +33,28 @@ class MyApp extends StatelessWidget {
               ListaAnimaisScreen(imageProvider: MemoryImage(Uint8List(0))),
           '/favoritos': (context) =>
               FavoritosScreen(imageProvider: MemoryImage(Uint8List(0))),
+        },
+        onGenerateRoute: (settings) {
+          return PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              switch (settings.name) {
+                case '/':
+                  return ListaAnimaisScreen(
+                    imageProvider: MemoryImage(Uint8List(0)),
+                  );
+                case '/favoritos':
+                  return FavoritosScreen(
+                    imageProvider: MemoryImage(Uint8List(0)),
+                  );
+                default:
+                  return Container();
+              }
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          );
         },
       ),
     );
